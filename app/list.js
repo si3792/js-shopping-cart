@@ -18,6 +18,10 @@ var List = (function() {
         if (quantity % 1 != 0) throw {
             'Product': 'validateQuantity - quantity is not a whole number'
         };
+
+        if(quantity <= 0) throw {
+          'Product': 'validateQuantity - quantity is negative or zero'
+        };
     }
 
     function List(name) {
@@ -25,10 +29,21 @@ var List = (function() {
         var _products = [];
         this.name = name;
 
+        /**
+         *    Returns a list of products and their quantities
+         *
+         *    @return {Array}
+         */
         this.getProducts = function() {
             return _products.slice(); // .slice() clones the array and returns reference to the new array.
         }
 
+        /**
+         *    Inserts a product into the list, with given quantity
+         *
+         *    @param {Product} product
+         *    @param {Number} quantity
+         */
         this.addProduct = function(product, quantity) {
             validateQuantity(quantity);
             if( !Product.isProduct(product) ) {
@@ -50,6 +65,11 @@ var List = (function() {
             DEBUG && console.log('Added product with id ' + product.getID() + ' to list ' + this.name);
         }
 
+        /**
+         *    Removes a product from the list with a given Id
+         *
+         *    @param  {Number} id Id of the product to be removed
+         */
         this.removeProduct = function(id) {
             for (var i in _products) {
                 if (_products[i].product.getID() == id) {
@@ -61,7 +81,13 @@ var List = (function() {
             DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
-        this.updateProduct = function(product, quantity) {
+        /**
+         *    Updates the quantity for a product in the list with given id
+         *
+         *    @param  {Number} id
+         *    @param  {Number} quantity
+         */
+        this.updateQuantity = function(id, quantity) {
             validateQuantity(quantity);
             if( !Product.isProduct(product) ) {
               throw {
@@ -70,15 +96,17 @@ var List = (function() {
             }
 
             for (var i in _products) {
-                if (_products[i].product.getID() == product.getID()) {
-                    _products[i].product = product;
+                if (_products[i].product.getID() == id) {
                     _products[i].quantity = quantity;
-                    DEBUG && console.log('Updated product with id ' + product.getID() + ' in list ' + this.name);
+                    DEBUG && console.log('Updated product with id ' + id + ' in list ' + this.name);
                     return;
                 }
             }
         }
 
+        /**
+         *    Clears the list
+         */
         this.clearList = function() {
             _products = [];
             DEBUG && console.log('Emptied list ' + this.name);
