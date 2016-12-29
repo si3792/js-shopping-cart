@@ -1,0 +1,23 @@
+{
+  "name": "js-shopping-cart",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/si3792/js-shopping-cart.git"
+  },
+  "author": "Simo Iliev <simo.t.iliev@gmail.com> (http://www.simoiliev.me/)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/si3792/js-shopping-cart/issues"
+  },
+  "homepage": "https://github.com/si3792/js-shopping-cart#readme",
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "materialize-css": "^0.97.8"
+  }
+}
