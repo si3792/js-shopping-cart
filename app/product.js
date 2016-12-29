@@ -60,6 +60,18 @@ var Product = (function() {
     }
 
     /**
+     *    createID is used to generate a unique ID during Product construction,
+     *    by using localStorage to keep track of used IDs.
+     *
+     *    @return {Number} An unused Product id
+     */
+    let createID = function() {
+      let idCount = Number(localStorage.getItem('idCount')) || 0; // Get current idCount or 0 if it doesn't exist
+      localStorage.setItem('idCount', idCount + 1);
+      return idCount + 1;
+    }
+
+    /**
      *    Product constructor
      *
      *    @param  {String} title
@@ -74,26 +86,31 @@ var Product = (function() {
         validate_quantity(quantity);
         validate_price(price);
 
-        DEBUG && console.log('Creating product..');
-        this._title = title;
-        this._description = description;
-        this._quantity = quantity;
-        this._price = price;
+        // Private properties
+        var _id = createID();
+        var _title = title;
+        var _description = description;
+        var _quantity = quantity;
+        var _price = price;
+
+        this.getID = function() {
+          return _id;
+        }
 
         this.getTitle = function() {
-          return this._title;
+          return _title;
         }
         this.setTitle = function(title) {
           validate_title(title);
-          this._title = title;
+          _title = title;
         }
 
         this.getDescription = function() {
-          return this._description;
+          return _description;
         }
         this.setDescription = function(description) {
           validate_description(description);
-          this._description = description;
+          _description = description;
         }
 
         this.getQuantity = function() {
@@ -101,15 +118,15 @@ var Product = (function() {
         }
         this.setQuantity = function(quantity) {
           validate_quantity(quantity);
-          this._quantity = quantity;
+          _quantity = quantity;
         }
 
         this.getPrice = function() {
-          return this._price;
+          return _price;
         }
         this.setPrice = function(price) {
           validate_price(price);
-          this._price = price;
+          _price = price;
         }
     }
     return Product;
