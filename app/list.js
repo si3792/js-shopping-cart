@@ -89,11 +89,6 @@ var List = (function() {
          */
         this.updateQuantity = function(id, quantity) {
             validateQuantity(quantity);
-            if( !Product.isProduct(product) ) {
-              throw {
-                'List': 'updateProduct - product parameter is not an instance of Product'
-              };
-            }
 
             for (var i in _products) {
                 if (_products[i].product.getID() == id) {
