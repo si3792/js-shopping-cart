@@ -19,8 +19,8 @@ var List = (function() {
             'Product': 'validateQuantity - quantity is not a whole number'
         };
 
-        if(quantity <= 0) throw {
-          'Product': 'validateQuantity - quantity is negative or zero'
+        if (quantity <= 0) throw {
+            'Product': 'validateQuantity - quantity is negative or zero'
         };
     }
 
@@ -34,8 +34,38 @@ var List = (function() {
          *
          *    @return {Array}
          */
-        this.getProducts = function() {
-            return _products.slice(); // .slice() clones the array and returns reference to the new array.
+        this.getProductsList = function() {
+            let list = [];
+
+            for (var i in _products) {
+                list.push({
+                    quantity: _products[i].quantity,
+                    product: {
+                        id: _products[i].product.getID(),
+                        title: _products[i].product.getTitle(),
+                        description: _products[i].product.getDescription(),
+                        price: _products[i].product.getPrice()
+                    }
+                });
+            }
+
+            return list;
+        }
+
+        /**
+         *    Returns a Product with a given Id (if it exists in the list)
+         *
+         *    @param  {Number} id
+         *
+         *    @return {Product}
+         */
+        this.getProduct = function(id) {
+            for (var i in _products) {
+                if (_products[i].product.getID() == id) {
+                    return _products[i].product;
+                }
+            }
+            DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
         /**
@@ -46,10 +76,10 @@ var List = (function() {
          */
         this.addProduct = function(product, quantity) {
             validateQuantity(quantity);
-            if( !Product.isProduct(product) ) {
-              throw {
-                'List': 'addProduct - product parameter is not an instance of Product'
-              };
+            if (!Product.isProduct(product)) {
+                throw {
+                    'List': 'addProduct - product parameter is not an instance of Product'
+                };
             }
 
             for (var i in _products) {
@@ -93,10 +123,11 @@ var List = (function() {
             for (var i in _products) {
                 if (_products[i].product.getID() == id) {
                     _products[i].quantity = quantity;
-                    DEBUG && console.log('Updated product with id ' + id + ' in list ' + this.name);
+                    DEBUG && console.log('Updated product quantity with id ' + id + ' in list ' + this.name);
                     return;
                 }
             }
+            DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
         /**
