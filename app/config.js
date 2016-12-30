@@ -1,3 +1,7 @@
+/*********************************************
+ *    Contains various configuration options *
+ *********************************************/
+
 'use strict';
 
 const DEBUG = true;   // Enables console logs
