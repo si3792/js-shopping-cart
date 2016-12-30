@@ -307,8 +307,8 @@ $(document).ready(function() {
         },
         modalDesc: {
           required: 'Description is required',
-          minlength: 'Description must be at least ' + CONSTANTS.productTitleMin + ' characters',
-          maxlength: 'Description must be at most ' + CONSTANTS.productTitleMax + ' characters',
+          minlength: 'Description must be at least ' + CONSTANTS.productDescMin + ' characters',
+          maxlength: 'Description must be at most ' + CONSTANTS.productDescMax + ' characters',
         },
         modalPrice: {
           required: 'Price is required',
