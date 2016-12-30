@@ -96,7 +96,13 @@ var refreshCartUI = function() {
 
         let id = $(this).attr('refersTo');
         let newVal = $(this).val();
-        CartList.updateQuantity(id, newVal);
+
+        try {
+            CartList.updateQuantity(id, newVal);
+        } catch (e) {
+          // Reset input to previous value if newVal is not valid
+          $(this).val( CartList.getQuantity(id) );
+        }
         refreshCartUI();
     });
     Materialize.updateTextFields();
@@ -184,7 +190,7 @@ var refreshProductsUI = function() {
             // CREATE button logic
             $('#createProductBtn').off('click.createProduct').on('click.createProduct', function() {
 
-                if ( !$('#modalForm').valid()) {
+                if (!$('#modalForm').valid()) {
                     alert('You are trying to submit an invalid form');
                     return;
                 }
@@ -231,7 +237,7 @@ var refreshProductsUI = function() {
             // UPDATE button logic
             $('#updateProductBtn').off('click.updateProduct').on('click.updateProduct', function() {
 
-                if ( !$('#modalForm').valid()) {
+                if (!$('#modalForm').valid()) {
                     alert('You are trying to submit an invalid form');
                     return;
                 }
@@ -267,7 +273,7 @@ var refreshProductsUI = function() {
         }).val();
 
         if (quantity % 1 != 0 || quantity == '' || quantity < 0) {
-          alert('Invalid quantity value!');
+            alert('Invalid quantity value!');
         }
 
         if (CartList.getProduct(id) == null) {
