@@ -308,10 +308,10 @@ var refreshProductsUI = function() {
 var purgeOldProductEntries = function() {
 
     $.each(localStorage, function(key, value) {
-        if(key == 'idCount' || key == 'CartList' || key == 'ProductsList') return;
+        if (key == 'idCount' || key == 'CartList' || key == 'ProductsList') return;
 
-        if( Product.getInstantiatedProductByID(key) == null ) {
-          localStorage.removeItem(key);
+        if (Product.getInstantiatedProductByID(key) == null) {
+            localStorage.removeItem(key);
         }
     });
 }
@@ -335,6 +335,52 @@ $(document).ready(function() {
         CartList.clearList();
         TOASTS && Materialize.toast('Mock checkout called', 3000)
         refreshCartUI();
+    });
+
+    // Logic for image
+    $('#imageLoader').change(function(e) {
+
+        var reader = new FileReader();
+
+        /**
+         *    Given x and y of an image, and maximum dimensions
+         *    for a canvas, calculateImageScaleFactor() returns
+         *    the scale factor, by which the image should be scaled
+         *    to optimally fit inside the canvas, without changing its aspect ratio.
+         *
+         *    @param  {Number} imageWidth
+         *    @param  {Number} imageHeight
+         *    @param  {Number} maxCanvasWidth
+         *    @param  {Number} maxCanvasHeight
+         *
+         *    @return {Number} scale factor
+         */
+        var calculateImageScaleFactor = function(imageWidth, imageHeight, maxCanvasWidth, maxCanvasHeight) {
+            let canvasAspectRatio = maxCanvasWidth / maxCanvasHeight;
+            let imageAspectRatio = imageWidth / imageHeight;
+
+            if (imageAspectRatio > canvasAspectRatio)
+                return maxCanvasWidth / imageWidth;
+            else
+                return maxCanvasHeight / imageHeight;
+        }
+
+        reader.onload = function(event) {
+            var img = new Image();
+            img.onload = function() {
+
+                let canvas = $('#imageCanvas')[0];
+                let ctx = canvas.getContext('2d');
+
+                let scaleFactor = calculateImageScaleFactor(img.width, img.height, 450, 250);
+                canvas.width = img.width * scaleFactor;
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            }
+            img.src = event.target.result;
+        }
+
+        reader.readAsDataURL(e.target.files[0]);
     });
 
     // Configure modal form validation
