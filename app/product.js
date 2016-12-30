@@ -107,11 +107,11 @@ var Product = (function() {
         var _price = price;
         var _persistence = persistence;
 
+        var self = this;
+
         // Temporary Products are not registered
         if (_persistence)
             registerProductInstantiation(_id, this);
-
-        var self = this;
 
         /**
          *    JSON serialization for Product.
@@ -167,16 +167,17 @@ var Product = (function() {
         }
 
         /**
+         *    Private method
          *    If _persistence is enabled, saves Product's state
          *    to localStorage with key _id
          *
          */
-        this.saveState = function() {
+        var saveState = function() {
             if (!_persistence) return;
             DEBUG && console.log('Saving object with id ' + _id + ' to localStorage');
             localStorage.setItem(_id, self.toJSON());
         }
-        self.saveState();
+        saveState();
 
 
         this.getID = function() {
@@ -190,7 +191,7 @@ var Product = (function() {
             if (title == _title) return;
             validateTitle(title);
             _title = title;
-            self.saveState();
+            saveState();
         }
 
         this.getDescription = function() {
@@ -200,7 +201,7 @@ var Product = (function() {
             if (_description == description) return;
             validateDescription(description);
             _description = description;
-            self.saveState();
+            saveState();
         }
 
         this.getPrice = function() {
@@ -210,7 +211,7 @@ var Product = (function() {
             if (_price == price) return;
             validatePrice(price);
             _price = price;
-            self.saveState();
+            saveState();
         }
 
     }
@@ -237,10 +238,9 @@ Product.fromJSON = function(str) {
         product.fromJSON(str);
     } catch (e) {
         if (e.Product == 'Trying to deserialize a product that is already instantiated') {
-          DEBUG && console.log('Returning reference to instantiated Product instead. ID: ' + e.id);
-          return Product.getInstantiatedProductByID(e.id);
-        }
-        else
+            DEBUG && console.log('Returning reference to instantiated Product instead. ID: ' + e.id);
+            return Product.getInstantiatedProductByID(e.id);
+        } else
             throw e;
     }
 

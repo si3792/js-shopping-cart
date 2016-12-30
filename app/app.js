@@ -1,7 +1,7 @@
 'use strict';
 
-const DEBUG = true;
-const TOASTS = true;
+const DEBUG = true;   // Enables console logs
+const TOASTS = true;  // Enables toasts
 
 const CONSTANTS = {
   productTitleMin: 3,

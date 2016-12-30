@@ -36,6 +36,8 @@ var List = (function() {
         this.name = name;
         var _persistence = persistence;
 
+        var self = this;
+
         /**
          *    Creates a simple JSON representation of the list, containing
          *    its name and an array of (product_id, quantity) objects
@@ -58,14 +60,15 @@ var List = (function() {
         }
 
         /**
+         *    Private method
          *    If _persistence is enabled, saves List's state
          *    to localStorage with key name
          *
          */
-        this.saveState = function() {
+        var saveState = function() {
             if (!_persistence) return;
             DEBUG && console.log('Saving list with name ' + name + ' to localStorage');
-            localStorage.setItem(name, this.toJSON());
+            localStorage.setItem(name, self.toJSON());
         }
 
         /**
@@ -128,7 +131,7 @@ var List = (function() {
             });
 
             DEBUG && console.log('Added product with id ' + product.getID() + ' to list ' + this.name);
-            this.saveState();
+            saveState();
         }
 
         /**
@@ -141,7 +144,7 @@ var List = (function() {
                 if (_products[i].product.getID() == id) {
                     _products.splice(i, 1);
                     DEBUG && console.log('Removed product with id ' + id + ' from list ' + this.name);
-                    this.saveState();
+                    saveState();
                     return;
                 }
             }
@@ -161,14 +164,20 @@ var List = (function() {
                 if (_products[i].product.getID() == id) {
                     _products[i].quantity = quantity;
                     DEBUG && console.log('Updated product quantity with id ' + id + ' in list ' + this.name);
-                    this.saveState();
+                    saveState();
                     return;
                 }
             }
             DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
-
+        /**
+         *    Returns quantity for a product in the list with given id
+         *
+         *    @param  {Number} id
+         *
+         *    @return {Number} quantity
+         */
         this.getQuantity = function(id) {
 
             for (var i in _products) {
@@ -184,7 +193,7 @@ var List = (function() {
          */
         this.clearList = function() {
             _products = [];
-            this.saveState();
+            saveState();
             DEBUG && console.log('Emptied list ' + this.name);
         }
 
@@ -193,7 +202,7 @@ var List = (function() {
 }());
 
 /**
- *    Function for List deserialization
+ *    Static function for List deserialization
  *
  *    @param  {String} str
  *
