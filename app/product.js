@@ -43,8 +43,8 @@ var Product = (function() {
         if (price == null) throw {
             'Product': 'validatePrice - null price'
         };
-        if( isNaN(price) ) throw {
-          'Product': 'validatePrice - price is NaN'
+        if (isNaN(price)) throw {
+            'Product': 'validatePrice - price is NaN'
         }
     }
 
@@ -106,6 +106,49 @@ var Product = (function() {
             validatePrice(price);
             _price = price;
         }
+
+        /**
+         *    JSON serialization for Product.
+         *
+         *    Use with Product.fromJSON() for deserialization.
+         *
+         *    @return {String}
+         */
+        this.toJSON = function() {
+            let product = {
+                id: _id,
+                title: _title,
+                description: _description,
+                price: _price
+            };
+            return JSON.stringify(product);
+        }
+
+        /**
+         *    Transforms this Product to a serialized Product
+         *
+         *    Use Product.fromJSON() for deserialization,
+         *    which returns a new Product and is easier to use.
+         *
+         *    @param  {String} str The serialized Product
+         */
+        this.fromJSON = function(str) {
+
+            let obj = JSON.parse(str);
+
+            validateTitle(obj.title);
+            validateDescription(obj.description);
+            validatePrice(obj.price);
+
+            if(obj.id == null || !Number(obj.id)) throw {
+              'Product': 'fromJSON - invalid id'
+            };
+
+            _id = obj.id;
+            _title = obj.title;
+            _description = obj.description;
+            _price = obj.price;
+        }
     }
     return Product;
 }());
@@ -118,5 +161,21 @@ var Product = (function() {
  *    @return {Boolean}
  */
 Product.isProduct = function(product) {
-  return product.constructor.name == 'Product';
+    return product.constructor.name == 'Product';
+}
+
+/**
+ *    Function for Product deserialization.
+ *
+ *    @param  {String} str The serialized Product
+ *
+ *    @return {Product}
+ */
+Product.fromJSON = function(str) {
+
+    var tmpTitle = Array(CONSTANTS.productTitleMin + 1).join('a');
+    var tmpDesc = Array(CONSTANTS.productDescMin + 1).join('a');
+    let product = new Product(tmpTitle, tmpDesc, 10);
+    product.fromJSON(str);
+    return product;
 }
