@@ -13,11 +13,11 @@ var CartList;
 /*
   Restore ProductsList and CartList from localStorage, or create them if they don't yet exist
  */
-if( localStorage.getItem('ProductsList') == null )  ProductsList = new List('ProductsList', true);
-else ProductsList = List.fromJSON( localStorage.getItem('ProductsList') );
+if (localStorage.getItem('ProductsList') == null) ProductsList = new List('ProductsList', true);
+else ProductsList = List.fromJSON(localStorage.getItem('ProductsList'));
 
-if( localStorage.getItem('CartList') == null )  CartList = new List('CartList', true);
-else CartList = List.fromJSON( localStorage.getItem('CartList') );
+if (localStorage.getItem('CartList') == null) CartList = new List('CartList', true);
+else CartList = List.fromJSON(localStorage.getItem('CartList'));
 
 var modalProductId; // The id of the product currently open in the modal for editing
 var CartListBaseCost; // Cost of all items in CartList, tax not included
@@ -109,8 +109,8 @@ var refreshCartUI = function() {
         try {
             CartList.updateQuantity(id, newVal);
         } catch (e) {
-          // Reset input to previous value if newVal is not valid
-          $(this).val( CartList.getQuantity(id) );
+            // Reset input to previous value if newVal is not valid
+            $(this).val(CartList.getQuantity(id));
         }
         refreshCartUI();
     });
@@ -299,6 +299,23 @@ var refreshProductsUI = function() {
         TOASTS && Materialize.toast('Product(s) for total of $' + product.getPrice() * quantity + ' added to cart', 3000);
     });
 }
+
+/**
+ *    Small helper function which iterates over localStorage products
+ *    and removes those which are not instantiated. Should be run after
+ *    loading ProductsList and CartList in order to purge unused entries.
+ */
+var purgeOldProductEntries = function() {
+
+    $.each(localStorage, function(key, value) {
+        if(key == 'idCount' || key == 'CartList' || key == 'ProductsList') return;
+
+        if( Product.getInstantiatedProductByID(key) == null ) {
+          localStorage.removeItem(key);
+        }
+    });
+}
+purgeOldProductEntries()
 
 $(document).ready(function() {
 
