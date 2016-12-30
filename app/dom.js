@@ -281,4 +281,40 @@ $(document).ready(function() {
         refreshCartUI();
     });
 
+    // Configure modal form validation
+    $('#modalForm').validate({
+      rules: {
+        modalTitle: {
+          required: true,
+          minlength: CONSTANTS.productTitleMin,
+          maxlength: CONSTANTS.productTitleMax
+        },
+        modalDesc: {
+          required: true,
+          minlength: CONSTANTS.productDescMin,
+          maxlength: CONSTANTS.productDescMax
+        },
+        modalPrice: {
+          required: true,
+          min: 0
+        }
+      },
+      messages: {
+        modalTitle: {
+          required: 'Title is required',
+          minlength: 'Title must be at least ' + CONSTANTS.productTitleMin + ' characters',
+          maxlength: 'Title must be at most ' + CONSTANTS.productTitleMax + ' characters',
+        },
+        modalDesc: {
+          required: 'Description is required',
+          minlength: 'Description must be at least ' + CONSTANTS.productTitleMin + ' characters',
+          maxlength: 'Description must be at most ' + CONSTANTS.productTitleMax + ' characters',
+        },
+        modalPrice: {
+          required: 'Price is required',
+          min: 'Price must be positive'
+        }
+      }
+    });
+
 });

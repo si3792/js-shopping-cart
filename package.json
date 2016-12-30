@@ -18,6 +18,7 @@
   "homepage": "https://github.com/si3792/js-shopping-cart#readme",
   "dependencies": {
     "jquery": "^3.1.1",
+    "jquery-validation": "^1.16.0",
     "materialize-css": "^0.96.1"
   }
 }

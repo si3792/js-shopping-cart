@@ -6,6 +6,7 @@
         <!-- Node modules -->
         <script src='node_modules/jquery/dist/jquery.min.js'></script>
         <script src='node_modules/materialize-css/bin/materialize.js'></script>
+        <script src='node_modules/jquery-validation/dist/jquery.validate.min.js'></script>
 
         <!-- App -->
         <script src='app/app.js'></script>
@@ -13,6 +14,7 @@
         <script src='app/list.js'></script>
         <script src='app/dom.js'></script>
 
+        <link rel="stylesheet" href='styles.css'/>
         <link rel="stylesheet" href='node_modules/materialize-css/bin/materialize.css'/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
@@ -62,32 +64,32 @@
             <div class="modal-content">
                 <h4 class='modalShowOnEdit'>Edit Product</h4>
                 <h4 class='modalShowOnCreate'>Create Product</h4>
-                <form>
+                <form id='modalForm'>
                     <div class='row'>
                         <div class='col s12 m4'>
                             <div class="row">
                                 <div class="input-field">
-                                    <input placeholder="Title" id="modalTitle" type="text">
+                                    <input placeholder="Title" id="modalTitle" name="modalTitle" type="text">
                                     <label for="modalTitle">Title</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field">
-                                    <textarea id="modalDesc" class="materialize-textarea"></textarea>
+                                    <textarea id="modalDesc" name='modalDesc' class="materialize-textarea"></textarea>
                                     <label for="modalDesc">Description</label>
                                 </div>
                             </div>
                             <div class='row'>
                                 <div class="input-field col s12">
-                                    <input id="modalPrice" type="number">
+                                    <input id="modalPrice" name='modalPrice' type="number">
                                     <label for="modalPrice">Price</label>
                                 </div>
                             </div>
                         </div>
                         <div class='col s12 m4'>
-                            <a id='updateProductBtn' class="modalShowOnEdit waves-effect waves-light  modal-action modal-close btn-large">
+                            <a id='updateProductBtn' type='submit' class="modalShowOnEdit waves-effect waves-light  btn-large">
                                 Update</a>
-                            <a id='createProductBtn' class="modalShowOnCreate waves-effect waves-light  modal-action modal-close btn-large">
+                            <a id='createProductBtn' type='submit' class="modalShowOnCreate waves-effect waves-light btn-large">
                                 Create</a>
                             <a class="waves-effect waves-light  modal-action modal-close btn-large">
                                 Close</a>

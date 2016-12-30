@@ -1,0 +1,5 @@
+.input-field .error {
+  all: initial;
+  font-size: 15px !important;
+  color: rgb(242, 61, 61) !important;
+}
