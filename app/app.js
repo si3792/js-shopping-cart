@@ -1,6 +1,7 @@
 'use strict';
 
 const DEBUG = true;
+const TOASTS = true;
 
 const CONSTANTS = {
   productTitleMin: 3,

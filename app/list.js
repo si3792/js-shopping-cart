@@ -130,6 +130,17 @@ var List = (function() {
             DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
+
+        this.getQuantity = function(id) {
+
+          for (var i in _products) {
+              if (_products[i].product.getID() == id) {
+                  return Number(_products[i].quantity);
+              }
+          }
+          DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
+        }
+
         /**
          *    Clears the list
          */
