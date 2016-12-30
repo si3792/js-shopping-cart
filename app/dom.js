@@ -13,7 +13,7 @@ var CartList = new List('ShoppingCartList');
 var modalProductId; // The id of the product currently open in the modal for editing
 var CartListBaseCost; // Cost of all items in CartList, tax not included
 
-var modalValidaror;
+var modalValidaror; // Validator for the modal form
 
 /**
  *    Handles rendering of Cart tab and
