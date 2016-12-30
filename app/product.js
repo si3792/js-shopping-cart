@@ -60,14 +60,41 @@ var Product = (function() {
         return idCount + 1;
     }
 
+    // This holds all instantiated Products
+    let instantiatedProducts = {};
+
+
+    /**
+     *    Whenever a persistent Product is instantiated (deserialized), it calls this function to register itself by its id.
+     *    This is done in case of consequent calls for deserialization with the same id, which then return reference to the registered product.
+     *
+     *    @param  {Number} id
+     *    @param  {Product} product
+     */
+    let registerProductInstantiation = function(id, product) {
+        instantiatedProducts[id] = product;
+    }
+
+    /**
+     *    If a Product with the given id is already instantiated, return a reference to it
+     *
+     *    @param  {Number} id
+     *
+     *    @return {Product}
+     */
+    Product.getInstantiatedProductByID = function(id) {
+        return instantiatedProducts[id];
+    }
+
     /**
      *    Product constructor
      *
      *    @param  {String} title
      *    @param  {String} description
      *    @param  {Number} price
+     *    @param  {Boolean} persistence If persistence is enabled, the product is automatically saved in localStorage (key=id) after each operation on it.
      */
-    function Product(title, description, price) {
+    function Product(title, description, price, persistence) {
 
         validateTitle(title);
         validateDescription(description);
@@ -78,34 +105,13 @@ var Product = (function() {
         var _title = title;
         var _description = description;
         var _price = price;
+        var _persistence = persistence;
 
-        this.getID = function() {
-            return _id;
-        }
+        // Temporary Products are not registered
+        if (_persistence)
+            registerProductInstantiation(_id, this);
 
-        this.getTitle = function() {
-            return _title;
-        }
-        this.setTitle = function(title) {
-            validateTitle(title);
-            _title = title;
-        }
-
-        this.getDescription = function() {
-            return _description;
-        }
-        this.setDescription = function(description) {
-            validateDescription(description);
-            _description = description;
-        }
-
-        this.getPrice = function() {
-            return _price;
-        }
-        this.setPrice = function(price) {
-            validatePrice(price);
-            _price = price;
-        }
+        var self = this;
 
         /**
          *    JSON serialization for Product.
@@ -135,37 +141,87 @@ var Product = (function() {
         this.fromJSON = function(str) {
 
             let obj = JSON.parse(str);
+            if (instantiatedProducts[obj.id] != null) {
+                DEBUG && console.log("Trying to deserialize a product that is already instantiated. ID: " + obj.id);
+                throw {
+                    'Product': 'Trying to deserialize a product that is already instantiated',
+                    'id': obj.id
+                };
+            }
 
             validateTitle(obj.title);
             validateDescription(obj.description);
             validatePrice(obj.price);
 
-            if(obj.id == null || !Number(obj.id)) throw {
-              'Product': 'fromJSON - invalid id'
+            if (obj.id == null || !Number(obj.id)) throw {
+                'Product': 'fromJSON - invalid id'
             };
 
             _id = obj.id;
             _title = obj.title;
             _description = obj.description;
             _price = obj.price;
+            _persistence = true;
+
+            registerProductInstantiation(_id, this);
         }
+
+        /**
+         *    If _persistence is enabled, saves Product's state
+         *    to localStorage with key _id
+         *
+         */
+        this.saveState = function() {
+            if (!_persistence) return;
+            DEBUG && console.log('Saving object with id ' + _id + ' to localStorage');
+            localStorage.setItem(_id, self.toJSON());
+        }
+        self.saveState();
+
+
+        this.getID = function() {
+            return _id;
+        }
+
+        this.getTitle = function() {
+            return _title;
+        }
+        this.setTitle = function(title) {
+            if (title == _title) return;
+            validateTitle(title);
+            _title = title;
+            self.saveState();
+        }
+
+        this.getDescription = function() {
+            return _description;
+        }
+        this.setDescription = function(description) {
+            if (_description == description) return;
+            validateDescription(description);
+            _description = description;
+            self.saveState();
+        }
+
+        this.getPrice = function() {
+            return _price;
+        }
+        this.setPrice = function(price) {
+            if (_price == price) return;
+            validatePrice(price);
+            _price = price;
+            self.saveState();
+        }
+
     }
     return Product;
 }());
 
-/**
- *    Static method for checking if an object is a Product
- *
- *    @param  {Object}  product The object to be tested
- *
- *    @return {Boolean}
- */
-Product.isProduct = function(product) {
-    return product.constructor.name == 'Product';
-}
 
 /**
  *    Function for Product deserialization.
+ *    If a Product with the same ID is already instantiated,
+ *    returns a reference to it instead.
  *
  *    @param  {String} str The serialized Product
  *
@@ -175,7 +231,18 @@ Product.fromJSON = function(str) {
 
     var tmpTitle = Array(CONSTANTS.productTitleMin + 1).join('a');
     var tmpDesc = Array(CONSTANTS.productDescMin + 1).join('a');
-    let product = new Product(tmpTitle, tmpDesc, 10);
-    product.fromJSON(str);
+    let product = new Product(tmpTitle, tmpDesc, 10, false);
+
+    try {
+        product.fromJSON(str);
+    } catch (e) {
+        if (e.Product == 'Trying to deserialize a product that is already instantiated') {
+          DEBUG && console.log('Returning reference to instantiated Product instead. ID: ' + e.id);
+          return Product.getInstantiatedProductByID(e.id);
+        }
+        else
+            throw e;
+    }
+
     return product;
 }

@@ -24,13 +24,52 @@ var List = (function() {
         };
     }
 
-    function List(name) {
+    /**
+     *    Constructs a List object
+     *
+     *    @param {String} name
+     *    @param {Boolean} persistence If persistence is enabled, the list is automatically saved in localStorage (key=name) after each operation on it.
+     */
+    function List(name, persistence) {
 
         var _products = [];
         this.name = name;
+        var _persistence = persistence;
 
         /**
-         *    Returns a list of products and their quantities
+         *    Creates a simple JSON representation of the list, containing
+         *    its name and an array of (product_id, quantity) objects
+         *
+         *    @return {String}
+         */
+        this.toJSON = function() {
+
+            let products = [];
+            for (var i in _products) {
+                products.push({
+                    product_id: _products[i].product.getID(),
+                    quantity: _products[i].quantity
+                });
+            }
+            return JSON.stringify({
+                name: name,
+                products: products
+            });
+        }
+
+        /**
+         *    If _persistence is enabled, saves List's state
+         *    to localStorage with key name
+         *
+         */
+        this.saveState = function() {
+            if (!_persistence) return;
+            DEBUG && console.log('Saving list with name ' + name + ' to localStorage');
+            localStorage.setItem(name, this.toJSON());
+        }
+
+        /**
+         *    Returns a list of products and their quantities, for displaying to the user
          *
          *    @return {Array}
          */
@@ -76,11 +115,6 @@ var List = (function() {
          */
         this.addProduct = function(product, quantity) {
             validateQuantity(quantity);
-            if (!Product.isProduct(product)) {
-                throw {
-                    'List': 'addProduct - product parameter is not an instance of Product'
-                };
-            }
 
             for (var i in _products) {
                 if (_products[i].product.getID() == product.getID()) {
@@ -92,7 +126,9 @@ var List = (function() {
                 product: product,
                 quantity: quantity
             });
+
             DEBUG && console.log('Added product with id ' + product.getID() + ' to list ' + this.name);
+            this.saveState();
         }
 
         /**
@@ -105,6 +141,7 @@ var List = (function() {
                 if (_products[i].product.getID() == id) {
                     _products.splice(i, 1);
                     DEBUG && console.log('Removed product with id ' + id + ' from list ' + this.name);
+                    this.saveState();
                     return;
                 }
             }
@@ -124,6 +161,7 @@ var List = (function() {
                 if (_products[i].product.getID() == id) {
                     _products[i].quantity = quantity;
                     DEBUG && console.log('Updated product quantity with id ' + id + ' in list ' + this.name);
+                    this.saveState();
                     return;
                 }
             }
@@ -133,12 +171,12 @@ var List = (function() {
 
         this.getQuantity = function(id) {
 
-          for (var i in _products) {
-              if (_products[i].product.getID() == id) {
-                  return Number(_products[i].quantity);
-              }
-          }
-          DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
+            for (var i in _products) {
+                if (_products[i].product.getID() == id) {
+                    return Number(_products[i].quantity);
+                }
+            }
+            DEBUG && console.log('Could not find product with id ' + id + ' in list ' + this.name);
         }
 
         /**
@@ -146,9 +184,34 @@ var List = (function() {
          */
         this.clearList = function() {
             _products = [];
+            this.saveState();
             DEBUG && console.log('Emptied list ' + this.name);
         }
 
     }
     return List;
 }());
+
+/**
+ *    Function for List deserialization
+ *
+ *    @param  {String} str
+ *
+ *    @return {List}
+ */
+List.fromJSON = function(str) {
+    let obj = JSON.parse(str);
+
+    let list = new List(obj.name, true);
+
+    for (var i in obj.products) {
+        let str = localStorage.getItem(obj.products[i].product_id);
+        if (str != null) {
+
+            let product = Product.fromJSON(str);
+            list.addProduct(product, obj.products[i].quantity);
+        }
+    }
+
+    return list;
+}

@@ -7,8 +7,17 @@
 var ProductsArray = [];
 var CartArray = [];
 
-var ProductsList = new List('ProductsList');
-var CartList = new List('ShoppingCartList');
+var ProductsList;
+var CartList;
+
+/*
+  Restore ProductsList and CartList from localStorage, or create them if they don't yet exist
+ */
+if( localStorage.getItem('ProductsList') == null )  ProductsList = new List('ProductsList', true);
+else ProductsList = List.fromJSON( localStorage.getItem('ProductsList') );
+
+if( localStorage.getItem('CartList') == null )  CartList = new List('CartList', true);
+else CartList = List.fromJSON( localStorage.getItem('CartList') );
 
 var modalProductId; // The id of the product currently open in the modal for editing
 var CartListBaseCost; // Cost of all items in CartList, tax not included
@@ -200,7 +209,7 @@ var refreshProductsUI = function() {
                 let title = $('#modalTitle').val();
                 let description = $('#modalDesc').val();
                 let price = $('#modalPrice').val();
-                let product = new Product(title, description, price);
+                let product = new Product(title, description, price, true);
 
                 // Clear modal fields
                 $('#modalTitle').val('');
@@ -292,11 +301,6 @@ var refreshProductsUI = function() {
 }
 
 $(document).ready(function() {
-
-    // Some Products for testing purposes
-    DEBUG && ProductsList.addProduct(new Product('Dummy Product', 'This dummy product is for testing only. Set DEBUG flag to false to turn it off.', 199), 1);
-    DEBUG && ProductsList.addProduct(new Product('Another Dummy Product', 'Set DEBUG flag to false to turn this mock product off.', 500), 1);
-    DEBUG && ProductsList.addProduct(new Product('Dummy McDummy Ultimate', 'Set DEBUG flag to false to turn this mock product off.', 14000), 1);
 
     // Start UI
     refreshCartUI();
