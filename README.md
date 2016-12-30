@@ -7,8 +7,8 @@ Then, simply open `index.html`.
 
 ## Dependencies
 
-- jquery for DOM manipulatio
-- jquery-validation for Form validation
+- jquery for DOM manipulation
+- jquery-validation for form validation
 - Materialize as CSS framework
 
 ## Notes on requirements
