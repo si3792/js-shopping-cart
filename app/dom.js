@@ -196,6 +196,13 @@ var refreshProductsUI = function() {
                 let price = $('#modalPrice').val();
                 let product = new Product(title, description, price);
 
+                // Clear modal fields
+                $('#modalTitle').val('');
+                $('#modalDesc').val('');
+                $('#modalPrice').val('');
+                // Reset form validation
+                modalValidaror.resetForm();
+
                 ProductsList.addProduct(product, 1);
                 TOASTS && Materialize.toast('Product successfuly added', 3000)
                 refreshProductsUI();
@@ -258,6 +265,10 @@ var refreshProductsUI = function() {
         let quantity = $('.quantityFields').filter(function() {
             return $(this).attr('refersTo') == id;
         }).val();
+
+        if (quantity % 1 != 0 || quantity == '' || quantity < 0) {
+          alert('Invalid quantity value!');
+        }
 
         if (CartList.getProduct(id) == null) {
             // If the cart doesn't have this product, add it
