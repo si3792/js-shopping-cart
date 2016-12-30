@@ -13,6 +13,8 @@ var CartList = new List('ShoppingCartList');
 var modalProductId; // The id of the product currently open in the modal for editing
 var CartListBaseCost; // Cost of all items in CartList, tax not included
 
+var modalValidaror;
+
 /**
  *    Handles rendering of Cart tab and
  *    wiring its logic.
@@ -176,8 +178,16 @@ var refreshProductsUI = function() {
             $('#modalDesc').val('');
             $('#modalPrice').val('');
 
+            // Reset form validation
+            modalValidaror.resetForm();
+
             // CREATE button logic
             $('#createProductBtn').off('click.createProduct').on('click.createProduct', function() {
+
+                if ( !$('#modalForm').valid()) {
+                    alert('You are trying to submit an invalid form');
+                    return;
+                }
 
                 DEBUG && console.log('Creating new product');
 
@@ -208,8 +218,16 @@ var refreshProductsUI = function() {
                 }
             }
 
+            // Reset form validation
+            modalValidaror.resetForm();
+
             // UPDATE button logic
             $('#updateProductBtn').off('click.updateProduct').on('click.updateProduct', function() {
+
+                if ( !$('#modalForm').valid()) {
+                    alert('You are trying to submit an invalid form');
+                    return;
+                }
 
                 DEBUG && console.log('Updating product with id ' + modalProductId);
                 let updatedProduct = ProductsList.getProduct(modalProductId);
@@ -282,39 +300,39 @@ $(document).ready(function() {
     });
 
     // Configure modal form validation
-    $('#modalForm').validate({
-      rules: {
-        modalTitle: {
-          required: true,
-          minlength: CONSTANTS.productTitleMin,
-          maxlength: CONSTANTS.productTitleMax
+    modalValidaror = $('#modalForm').validate({
+        rules: {
+            modalTitle: {
+                required: true,
+                minlength: CONSTANTS.productTitleMin,
+                maxlength: CONSTANTS.productTitleMax
+            },
+            modalDesc: {
+                required: true,
+                minlength: CONSTANTS.productDescMin,
+                maxlength: CONSTANTS.productDescMax
+            },
+            modalPrice: {
+                required: true,
+                min: 0
+            }
         },
-        modalDesc: {
-          required: true,
-          minlength: CONSTANTS.productDescMin,
-          maxlength: CONSTANTS.productDescMax
-        },
-        modalPrice: {
-          required: true,
-          min: 0
+        messages: {
+            modalTitle: {
+                required: 'Title is required',
+                minlength: 'Title must be at least ' + CONSTANTS.productTitleMin + ' characters',
+                maxlength: 'Title must be at most ' + CONSTANTS.productTitleMax + ' characters',
+            },
+            modalDesc: {
+                required: 'Description is required',
+                minlength: 'Description must be at least ' + CONSTANTS.productDescMin + ' characters',
+                maxlength: 'Description must be at most ' + CONSTANTS.productDescMax + ' characters',
+            },
+            modalPrice: {
+                required: 'Price is required',
+                min: 'Price must be positive'
+            }
         }
-      },
-      messages: {
-        modalTitle: {
-          required: 'Title is required',
-          minlength: 'Title must be at least ' + CONSTANTS.productTitleMin + ' characters',
-          maxlength: 'Title must be at most ' + CONSTANTS.productTitleMax + ' characters',
-        },
-        modalDesc: {
-          required: 'Description is required',
-          minlength: 'Description must be at least ' + CONSTANTS.productDescMin + ' characters',
-          maxlength: 'Description must be at most ' + CONSTANTS.productDescMax + ' characters',
-        },
-        modalPrice: {
-          required: 'Price is required',
-          min: 'Price must be positive'
-        }
-      }
     });
 
 });
