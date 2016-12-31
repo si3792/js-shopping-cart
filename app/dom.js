@@ -367,8 +367,6 @@ $(document).ready(function() {
     // Logic for image
     $('#imageLoader').change(function(e) {
 
-        var reader = new FileReader();
-
         /**
          *    Given x and y of an image, and maximum dimensions
          *    for a canvas, calculateImageScaleFactor() returns
@@ -392,6 +390,7 @@ $(document).ready(function() {
                 return maxCanvasHeight / imageHeight;
         }
 
+        var reader = new FileReader();
         reader.onload = function(event) {
             var img = new Image();
             img.onload = function() {
@@ -407,6 +406,13 @@ $(document).ready(function() {
                 modalCanvasTouchedFlag = true;
             }
             img.src = event.target.result;
+        }
+
+        let imgSizeMB = e.target.files[0].size / (1024*1024);
+        DEBUG && console.log('Trying to upload image with size: ' + imgSizeMB);
+        if(imgSizeMB > CONSTANTS.productImgMaxSizeMB) {
+          alert('Selected file is over the limit of ' + CONSTANTS.productImgMaxSizeMB + ' megabytes!');
+          return;
         }
 
         reader.readAsDataURL(e.target.files[0]);
