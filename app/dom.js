@@ -138,6 +138,8 @@ var refreshProductsUI = function() {
         let htmlPart = `
         <div class="col s12 m6">
           <div class="card blue-grey darken-1">
+            <div class="card-image-holder" style="background-image:url('` + ProductsArray[i].product.imgData + `')">
+            </div>
             <div class="card-content white-text">
               <h5>` + ProductsArray[i].product.title + `</h5>
               <span class="card-title">$` + ProductsArray[i].product.price + `</span>

@@ -1,5 +1,13 @@
 .input-field .error {
-  all: initial;
-  font-size: 15px !important;
-  color: rgb(242, 61, 61) !important;
+    all: initial;
+    font-size: 15px !important;
+    color: rgb(242, 61, 61) !important;
+}
+
+.card-image-holder {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width:  auto;
+    height: 300px;
 }
