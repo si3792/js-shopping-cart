@@ -86,7 +86,8 @@ var List = (function() {
                         id: _products[i].product.getID(),
                         title: _products[i].product.getTitle(),
                         description: _products[i].product.getDescription(),
-                        price: _products[i].product.getPrice()
+                        price: _products[i].product.getPrice(),
+                        imgData: _products[i].product.getImgData()
                     }
                 });
             }

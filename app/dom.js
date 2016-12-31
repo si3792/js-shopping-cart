@@ -188,13 +188,20 @@ var refreshProductsUI = function() {
             $('.modalShowOnCreate').show();
             $('.modalShowOnEdit').hide();
 
-            // Clear modal fields
-            $('#modalTitle').val('');
-            $('#modalDesc').val('');
-            $('#modalPrice').val('');
+            let clearModal = function() {
+                // Clear modal fields
+                $('#modalTitle').val('');
+                $('#modalDesc').val('');
+                $('#modalPrice').val('');
+                $('#modalImageCanvas').val('');
 
-            // Reset form validation
-            modalValidaror.resetForm();
+                let canvas = $('#modalImageCanvas')[0];
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+                // Reset form validation
+                modalValidaror.resetForm();
+            }
+            clearModal();
 
             // CREATE button logic
             $('#createProductBtn').off('click.createProduct').on('click.createProduct', function() {
@@ -210,13 +217,9 @@ var refreshProductsUI = function() {
                 let description = $('#modalDesc').val();
                 let price = $('#modalPrice').val();
                 let product = new Product(title, description, price, true);
+                product.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
 
-                // Clear modal fields
-                $('#modalTitle').val('');
-                $('#modalDesc').val('');
-                $('#modalPrice').val('');
-                // Reset form validation
-                modalValidaror.resetForm();
+                clearModal();
 
                 ProductsList.addProduct(product, 1);
                 TOASTS && Materialize.toast('Product successfuly added', 3000)
@@ -235,6 +238,16 @@ var refreshProductsUI = function() {
                     $('#modalTitle').val(ProductsArray[i].product.title);
                     $('#modalDesc').val(ProductsArray[i].product.description);
                     $('#modalPrice').val(ProductsArray[i].product.price);
+
+                    // draw product image on canvas
+                    let img = new Image;
+                    let canvas = $('#modalImageCanvas')[0];
+                    img.src = ProductsArray[i].product.imgData;
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
                     Materialize.updateTextFields();
                     modalProductId = ProductsArray[i].product.id;
                 }
@@ -256,6 +269,7 @@ var refreshProductsUI = function() {
                 updatedProduct.setTitle($('#modalTitle').val());
                 updatedProduct.setDescription($('#modalDesc').val());
                 updatedProduct.setPrice($('#modalPrice').val());
+                updatedProduct.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
                 TOASTS && Materialize.toast('Product successfuly updated', 3000)
                 refreshProductsUI();
                 refreshCartUI();
@@ -369,7 +383,7 @@ $(document).ready(function() {
             var img = new Image();
             img.onload = function() {
 
-                let canvas = $('#imageCanvas')[0];
+                let canvas = $('#modalImageCanvas')[0];
                 let ctx = canvas.getContext('2d');
 
                 let scaleFactor = calculateImageScaleFactor(img.width, img.height, 450, 250);

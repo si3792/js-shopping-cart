@@ -106,6 +106,7 @@ var Product = (function() {
         var _description = description;
         var _price = price;
         var _persistence = persistence;
+        var _imgData = '';
 
         var self = this;
 
@@ -125,7 +126,8 @@ var Product = (function() {
                 id: _id,
                 title: _title,
                 description: _description,
-                price: _price
+                price: _price,
+                imgData: _imgData
             };
             return JSON.stringify(product);
         }
@@ -161,6 +163,7 @@ var Product = (function() {
             _title = obj.title;
             _description = obj.description;
             _price = obj.price;
+            _imgData = obj.imgData;
             _persistence = true;
 
             registerProductInstantiation(_id, this);
@@ -211,6 +214,16 @@ var Product = (function() {
             if (_price == price) return;
             validatePrice(price);
             _price = price;
+            saveState();
+        }
+
+        this.getImgData = function() {
+            return _imgData;
+        }
+
+        this.setImgData = function(imgData) {
+            if(_imgData == imgData) return;
+            _imgData = imgData;
             saveState();
         }
 
