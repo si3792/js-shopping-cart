@@ -23,6 +23,7 @@ var modalProductId; // The id of the product currently open in the modal for edi
 var CartListBaseCost; // Cost of all items in CartList, tax not included
 
 var modalValidaror; // Validator for the modal form
+var modalCanvasTouchedFlag; // Boolean for checking whether an image was uploaded with the modal
 
 /**
  *    Handles rendering of Cart tab and
@@ -137,9 +138,11 @@ var refreshProductsUI = function() {
     for (var i in ProductsArray) {
         let htmlPart = `
         <div class="col s12 m6">
-          <div class="card blue-grey darken-1">
-            <div class="card-image-holder" style="background-image:url('` + ProductsArray[i].product.imgData + `')">
-            </div>
+          <div class="card blue-grey darken-1">`;
+        if (ProductsArray[i].product.imgData != '')
+            htmlPart += `<div class="card-image-holder" style="background-image:url('` + ProductsArray[i].product.imgData + `')"> </div>`;
+
+        htmlPart += `
             <div class="card-content white-text">
               <h5>` + ProductsArray[i].product.title + `</h5>
               <span class="card-title">$` + ProductsArray[i].product.price + `</span>
@@ -183,6 +186,8 @@ var refreshProductsUI = function() {
     // .modal-trigger's custom logic on modal open
     $('.modal-trigger').click(function() {
 
+        modalCanvasTouchedFlag = false;
+
         // Configure modal for Creation or Editing depending on how (from where) it was called
         if ($(this).attr('refersTo') == 'new') {
             DEBUG && console.log('Opening modal for product creation');
@@ -195,7 +200,6 @@ var refreshProductsUI = function() {
                 $('#modalTitle').val('');
                 $('#modalDesc').val('');
                 $('#modalPrice').val('');
-                $('#modalImageCanvas').val('');
 
                 let canvas = $('#modalImageCanvas')[0];
                 canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
@@ -219,7 +223,10 @@ var refreshProductsUI = function() {
                 let description = $('#modalDesc').val();
                 let price = $('#modalPrice').val();
                 let product = new Product(title, description, price, true);
-                product.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
+
+                if (modalCanvasTouchedFlag) {
+                    product.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
+                }
 
                 clearModal();
 
@@ -271,7 +278,11 @@ var refreshProductsUI = function() {
                 updatedProduct.setTitle($('#modalTitle').val());
                 updatedProduct.setDescription($('#modalDesc').val());
                 updatedProduct.setPrice($('#modalPrice').val());
-                updatedProduct.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
+
+                if (modalCanvasTouchedFlag) {
+                    updatedProduct.setImgData($('#modalImageCanvas')[0].toDataURL("image/png"));
+                }
+
                 TOASTS && Materialize.toast('Product successfuly updated', 3000)
                 refreshProductsUI();
                 refreshCartUI();
@@ -392,6 +403,8 @@ $(document).ready(function() {
                 canvas.width = img.width * scaleFactor;
                 canvas.height = img.height * scaleFactor;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                modalCanvasTouchedFlag = true;
             }
             img.src = event.target.result;
         }
